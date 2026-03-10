@@ -283,6 +283,34 @@
             stroke-linejoin: round;
         }
 
+        /* Brand icons via Simple Icons */
+        .icon-box .brand-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .card:hover .icon-box .brand-icon { opacity: 1; }
+
+        /* Yandex Music grey card */
+        .card-yandex {
+            background: rgba(100,100,110,0.07);
+            border-color: rgba(150,150,160,0.15);
+        }
+        .card-yandex:hover {
+            background: rgba(100,100,110,0.14);
+            border-color: rgba(180,180,190,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 1px rgba(150,150,160,0.1);
+        }
+        .card-yandex::after {
+            background: radial-gradient(circle 120px at var(--mx, 50%) var(--my, 50%), rgba(150,150,165,0.1), transparent 70%);
+        }
+        .card-yandex .icon-box {
+            background: rgba(130,130,140,0.12);
+            border-color: rgba(150,150,160,0.2);
+        }
+
         .card-body { flex: 1; min-width: 0; }
 
         .card-title {
@@ -329,6 +357,24 @@
             border-color: rgba(59,130,246,0.3);
         }
         .card-vpn .icon-box svg { stroke: #60a5fa; }
+
+        .card-bot {
+            background: rgba(59,130,246,0.05);
+            border-color: rgba(59,130,246,0.15);
+        }
+        .card-bot:hover {
+            background: rgba(59,130,246,0.11);
+            border-color: rgba(59,130,246,0.32);
+            box-shadow: 0 8px 32px rgba(59,130,246,0.08), 0 0 0 1px rgba(59,130,246,0.08);
+        }
+        .card-bot::after {
+            background: radial-gradient(circle 120px at var(--mx, 50%) var(--my, 50%), rgba(59,130,246,0.08), transparent 70%);
+        }
+        .card-bot .icon-box {
+            background: rgba(59,130,246,0.08);
+            border-color: rgba(59,130,246,0.18);
+        }
+        .card-bot .icon-box svg { stroke: #60a5fa; }
 
         .badge {
             font-family: 'Space Mono', monospace;
@@ -418,10 +464,10 @@
     <nav class="links">
 
         <!-- VPN highlighted -->
-        <p class="section-label">// партнёр</p>
+        <p class="section-label">// Проекты</p>
         <a href="https://t.me/ZentixVPN_bot?start=ref_5135680104" class="card card-vpn" target="_blank" rel="noopener noreferrer">
             <div class="icon-box">
-                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                <img src="https://cdn.simpleicons.org/letsencrypt/60a5fa" class="brand-icon" alt="Steam">
             </div>
             <div class="card-body">
                 <div class="card-title">ZentixVPN</div>
@@ -431,12 +477,24 @@
             <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
 
+        <a href="https://t.me/music_str1nks_bot" class="card card-bot" target="_blank" rel="noopener noreferrer">
+            <div class="icon-box">
+                <img src="https://cdn.simpleicons.org/robotframework/60a5fa" class="brand-icon" alt="Steam">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Яндекс скачивалка</div>
+                <div class="card-sub">Скачивает треки/альбомы с сервиса</div>
+            </div>
+            <span class="badge">BOT</span>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+
         <!-- Socials -->
-        <p class="section-label">// найти меня</p>
+        <p class="section-label">// Найти меня</p>
 
         <a href="https://t.me/str1nks" class="card" target="_blank" rel="noopener noreferrer">
             <div class="icon-box">
-                <svg viewBox="0 0 24 24"><path d="M21.2 4.4L17.6 19.8c-.3 1.1-1.1 1.4-2.1.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.3-5 8.5-7.7c.4-.3-.1-.5-.6-.2L5.4 13.3.6 11.8c-1.1-.3-1.1-1.1.2-1.6l19-7.3c.9-.3 1.7.2 1.4 1.5z"/></svg>
+                <img src="https://cdn.simpleicons.org/telegram/a09aff" class="brand-icon" alt="Steam">
             </div>
             <div class="card-body">
                 <div class="card-title">Telegram</div>
@@ -447,7 +505,7 @@
 
         <a href="https://www.twitch.tv/str1nks_" class="card" target="_blank" rel="noopener noreferrer">
             <div class="icon-box">
-                <svg viewBox="0 0 24 24"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zM11 11V7m4 4V7"/></svg>
+                <img src="https://cdn.simpleicons.org/twitch/a09aff" class="brand-icon" alt="Steam">
             </div>
             <div class="card-body">
                 <div class="card-title">Twitch</div>
@@ -458,7 +516,7 @@
 
         <a href="https://www.youtube.com/@str1nks_" class="card" target="_blank" rel="noopener noreferrer">
             <div class="icon-box">
-                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 12l-6 3.5v-7L16 12z" fill="currentColor" stroke="none" style="fill:rgba(255,255,255,0.7)"/></svg>
+                <img src="https://cdn.simpleicons.org/youtube/a09aff" class="brand-icon" alt="Steam">
             </div>
             <div class="card-body">
                 <div class="card-title">YouTube</div>
@@ -469,7 +527,7 @@
 
         <a href="https://steamcommunity.com/id/str1nks/" class="card" target="_blank" rel="noopener noreferrer">
             <div class="icon-box">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+                <img src="https://cdn.simpleicons.org/steam/a09aff" class="brand-icon" alt="Steam">
             </div>
             <div class="card-body">
                 <div class="card-title">Steam</div>
@@ -480,7 +538,7 @@
 
         <a href="https://steamcommunity.com/id/str2nks/" class="card" target="_blank" rel="noopener noreferrer">
             <div class="icon-box">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+                <img src="https://cdn.simpleicons.org/steam/a09aff" class="brand-icon" alt="Steam">
             </div>
             <div class="card-body">
                 <div class="card-title">Steam</div>
@@ -489,18 +547,7 @@
             <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
 
-        <a href="https://github.com/str1nks" class="card" target="_blank" rel="noopener noreferrer">
-            <div class="icon-box">
-                <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-            </div>
-            <div class="card-body">
-                <div class="card-title">GitHub</div>
-                <div class="card-sub">Мои проекты</div>
-            </div>
-            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-
-    </nav>
+        </nav>
 
     <footer>© 2026 str1nks · сделано с душой</footer>
 
