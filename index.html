@@ -221,6 +221,7 @@
             position: relative;
             overflow: hidden;
             transition: background 0.2s, border-left-color 0.2s, transform 0.2s;
+            border-left-color: #92A937;
         }
         .card::before {
             content: '';
@@ -253,6 +254,34 @@
             border-color: rgba(87,182,255,0.35);
         }
 
+        .card-vpn .icon-box {
+            background: transparent; /* Убираем полупрозрачный фон */
+            border: none;           /* Убираем рамку */
+        }
+
+        .card-vpn2 {
+            background: rgba(255, 100, 0, 0.08);
+            border-color: rgba(255, 100, 0, 0.25);
+            border-left-color: #FF6400;
+        }
+
+        .card-vpn2:hover {
+            background: rgba(255, 100, 0, 0.15);
+            border-color: rgba(255, 100, 0, 0.45);
+            transform: translateX(8px) scale(1.01); /* Чуть сильнее выезд при ховере */
+        }
+
+        .card-vpn2 .badge {
+            background: rgba(255, 100, 0, 0.15);
+            color: #FF6400;
+            border-color: rgba(255, 100, 0, 0.3);
+        }
+
+        .card-vpn2 .icon-box {
+            background: transparent; /* Убираем полупрозрачный фон */
+            border: none;           /* Убираем рамку */
+        }
+
         /* icon box */
         .icon-box {
             width: 48px; height: 48px;
@@ -261,6 +290,7 @@
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
             position: relative; z-index: 1;
+
         }
         .brand-icon {
             width: 26px; height: 26px;
@@ -269,7 +299,8 @@
             filter: grayscale(15%);
             transition: opacity 0.2s, filter 0.2s;
         }
-        .card-vpn .brand-icon { width: 40px; height: 40px; opacity: 0.9; }
+        .card-vpn .brand-icon { width: 40px; height: 40px; opacity: 1.0; }
+        .card-vpn2 .brand-icon { width: 45px; height: 45px; opacity: 1.0; }
         .card:hover .brand-icon { opacity: 1; filter: none; }
 
         /* card text */
@@ -382,27 +413,27 @@
             <p class="section-label">Zentix Core</p>
             <nav class="links">
 
-                <a href="https://t.me/ZentixVPN_bot" class="card card-proj card-vpn" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/ZentixVPN_bot" class="card card-proj card-vpn2" target="_blank" rel="noopener noreferrer">
                     <div class="icon-box">
                         <img src="zentixvpnlogo.png" class="brand-icon" alt="ZentixVPN">
                     </div>
                     <div class="card-body">
                         <div class="card-title">ZentixVPN</div>
-                        <div class="card-sub">промокод START → +1 день</div>
+                        <div class="card-sub">Простой, понятный, заботливый</div>
                     </div>
                     <span class="badge">VPN</span>
                     <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
 
-                <a href="https://t.me/ZentixMusic_bot" class="card card-proj" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/ZentixMusic_bot" class="card card-proj card-vpn" target="_blank" rel="noopener noreferrer">
                     <div class="icon-box">
-                        <img src="https://cdn.simpleicons.org/robotframework/5BB8FF" class="brand-icon" alt="Bot">
+                        <img src="zentixmusiclogo.png" class="brand-icon" alt="ZentixMusic">
                     </div>
                     <div class="card-body">
                         <div class="card-title">Zentix Music</div>
                         <div class="card-sub">БЕСПЛАТНО скачивает треки/альбомы</div>
                     </div>
-                    <span class="badge">BOT</span>
+                    <span class="badge">Music</span>
                     <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
 
