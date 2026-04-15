@@ -129,11 +129,17 @@
 
         .name {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(5rem, 8vw, 7rem);
-            letter-spacing: 0.06em;
-            line-height: 0.87;
+            /* Уменьшили размеры: теперь минимум 3.5rem, а максимум 5.5rem */
+            font-size: clamp(3.5rem, 6vw, 5.5rem); 
+            letter-spacing: 0.04em; /* Чуть уменьшили межсимвольный интервал */
+            line-height: 0.9;
             color: var(--text);
             margin-bottom: 1.2rem;
+            
+            /* Добавляем защиту от вылезания */
+            max-width: 100%;
+            overflow-wrap: anywhere; 
+            word-break: break-word;
         }
         .name .accent { color: var(--lime); }
 
