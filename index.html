@@ -685,78 +685,91 @@
 
 <script>
     // ─── КОНФИГ ─────────────────────────────────────────────────────────────
-    // Префикс ключей — уникальный для твоего сайта. Не меняй после деплоя!
-    const PREFIX = 'str1nks-v1';
+    const DB = 'https://str1nks-site-default-rtdb.europe-west1.firebasedatabase.app';
 
-    // Все ключи ссылок (совпадают с data-key на карточках)
     const LINK_KEYS = [
         'zentix-vpn', 'zentix-music', 'zentix-soon',
         'telegram', 'twitch', 'youtube', 'steam1', 'steam2'
     ];
 
-    // ─── API helper (countapi.mileshilliard.com — бесплатный, без регистрации) ──
-    const API = 'https://countapi.mileshilliard.com/api/v1';
-
+    // ─── Firebase REST API ───────────────────────────────────────────────────
+    // Читаем значение из БД
     async function getCount(key) {
         try {
-            const r = await fetch(`${API}/get/${PREFIX}-${key}`);
-            if (r.status === 404) return 0;
-            const d = await r.json();
-            return parseInt(d.value) || 0;
+            const r = await fetch(`${DB}/counters/${key}.json`);
+            const val = await r.json();
+            return parseInt(val) || 0;
         } catch { return 0; }
     }
 
+    // Атомарный инкремент через Firebase transactions
     async function hitCount(key) {
+        const url = `${DB}/counters/${key}.json`;
         try {
-            const r = await fetch(`${API}/hit/${PREFIX}-${key}`);
-            const d = await r.json();
-            return parseInt(d.value) || 0;
+            // Читаем текущее значение
+            const r = await fetch(url);
+            const current = parseInt(await r.json()) || 0;
+            const next = current + 1;
+            // Записываем новое
+            await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(next)
+            });
+            return next;
         } catch { return 0; }
     }
 
-    // ─── Форматирование числа (1500 → 1.5K) ─────────────────────────────────
+    // ─── Форматирование числа ────────────────────────────────────────────────
     function fmt(n) {
-        if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0','') + 'M';
-        if (n >= 1000)    return (n / 1000).toFixed(1).replace('.0','') + 'K';
+        if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M';
+        if (n >= 1000)    return (n / 1000).toFixed(1).replace('.0', '') + 'K';
         return String(n);
     }
 
     // ─── Счётчик посещений ───────────────────────────────────────────────────
     async function initVisitCounter() {
         const el = document.getElementById('visit-count');
-        const count = await hitCount('visits');  // +1 при каждом открытии
+        const count = await hitCount('visits');
         el.textContent = fmt(count);
         el.classList.remove('loading');
     }
 
-    // ─── Счётчики ссылок — загрузить текущие значения с сервера ─────────────
+    // ─── Загрузка счётчиков ссылок ───────────────────────────────────────────
     async function loadLinkCounts() {
         const totalsEl = document.getElementById('clicks-total');
 
-        // Загружаем все счётчики параллельно
-        const counts = await Promise.all(LINK_KEYS.map(async key => {
-            const count = await getCount(key);
-            const el = document.getElementById(`cnt-${key}`);
-            if (el) {
-                el.querySelector('.count-num').textContent = fmt(count);
-                el.classList.add('loaded');
-            }
-            return count;
-        }));
+        // Грузим все счётчики одним запросом
+        try {
+            const r = await fetch(`${DB}/counters.json`);
+            const data = await r.json() || {};
 
-        // Суммарный счётчик — тоже с сервера (не локальный!)
-        const clicksTotalCount = await getCount('clicks-total');
-        totalsEl.textContent = fmt(clicksTotalCount);
-        totalsEl.classList.remove('loading');
+            let total = 0;
+            LINK_KEYS.forEach(key => {
+                const count = parseInt(data[key]) || 0;
+                total += count;
+                const el = document.getElementById(`cnt-${key}`);
+                if (el) {
+                    el.querySelector('.count-num').textContent = fmt(count);
+                    el.classList.add('loaded');
+                }
+            });
+
+            totalsEl.textContent = fmt(total);
+            totalsEl.classList.remove('loading');
+        } catch {
+            totalsEl.textContent = '0';
+            totalsEl.classList.remove('loading');
+        }
     }
 
-    // ─── Обработка кликов по ссылкам ─────────────────────────────────────────
+    // ─── Клики по ссылкам ────────────────────────────────────────────────────
     function attachClickTrackers() {
         document.querySelectorAll('.card[data-key]').forEach(card => {
             card.addEventListener('click', async () => {
                 const key = card.dataset.key;
 
-                // Бьём счётчик конкретной ссылки
+                // Инкрементируем счётчик ссылки
                 const newCount = await hitCount(key);
                 const el = document.getElementById(`cnt-${key}`);
                 if (el) {
@@ -764,10 +777,11 @@
                     el.classList.add('loaded');
                 }
 
-                // Бьём общий счётчик переходов (хранится отдельно на сервере)
-                const totalCount = await hitCount('clicks-total');
+                // Обновляем суммарный счётчик визуально (без доп. запроса)
                 const totalsEl = document.getElementById('clicks-total');
-                totalsEl.textContent = fmt(totalCount);
+                const prev = parseInt(totalsEl.dataset.raw || '0') + 1;
+                totalsEl.dataset.raw = prev;
+                totalsEl.textContent = fmt(prev);
             });
         });
     }
@@ -776,6 +790,12 @@
     (async () => {
         attachClickTrackers();
         await Promise.all([initVisitCounter(), loadLinkCounts()]);
+
+        // Сохраняем raw total для локального инкремента при кликах
+        const r = await fetch(`${DB}/counters.json`);
+        const data = await r.json() || {};
+        const total = LINK_KEYS.reduce((sum, k) => sum + (parseInt(data[k]) || 0), 0);
+        document.getElementById('clicks-total').dataset.raw = total;
     })();
 </script>
 
