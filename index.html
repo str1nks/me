@@ -685,8 +685,8 @@
 
 <script>
     // ─── КОНФИГ ─────────────────────────────────────────────────────────────
-    // Namespace — уникальный для твоего сайта. Не меняй после первого деплоя!
-    const NS = 'str1nks-site-v1';
+    // Префикс ключей — уникальный для твоего сайта. Не меняй после деплоя!
+    const PREFIX = 'str1nks-v1';
 
     // Все ключи ссылок (совпадают с data-key на карточках)
     const LINK_KEYS = [
@@ -694,27 +694,27 @@
         'telegram', 'twitch', 'youtube', 'steam1', 'steam2'
     ];
 
-    // ─── CountAPI helper ─────────────────────────────────────────────────────
-    // CountAPI — бесплатный публичный сервис хранения счётчиков
-    const API = 'https://api.countapi.xyz';
+    // ─── API helper (countapi.mileshilliard.com — бесплатный, без регистрации) ──
+    const API = 'https://countapi.mileshilliard.com/api/v1';
 
     async function getCount(key) {
         try {
-            const r = await fetch(`${API}/get/${NS}/${key}`);
+            const r = await fetch(`${API}/get/${PREFIX}-${key}`);
+            if (r.status === 404) return 0;
             const d = await r.json();
-            return d.value ?? 0;
+            return parseInt(d.value) || 0;
         } catch { return 0; }
     }
 
     async function hitCount(key) {
         try {
-            const r = await fetch(`${API}/hit/${NS}/${key}`);
+            const r = await fetch(`${API}/hit/${PREFIX}-${key}`);
             const d = await r.json();
-            return d.value ?? 0;
+            return parseInt(d.value) || 0;
         } catch { return 0; }
     }
 
-    // ─── Форматирование числа (1500 → 1.5k) ─────────────────────────────────
+    // ─── Форматирование числа (1500 → 1.5K) ─────────────────────────────────
     function fmt(n) {
         if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0','') + 'M';
         if (n >= 1000)    return (n / 1000).toFixed(1).replace('.0','') + 'K';
@@ -724,17 +724,17 @@
     // ─── Счётчик посещений ───────────────────────────────────────────────────
     async function initVisitCounter() {
         const el = document.getElementById('visit-count');
-        // Бьём счётчик при каждом открытии страницы
-        const count = await hitCount('visits');
+        const count = await hitCount('visits');  // +1 при каждом открытии
         el.textContent = fmt(count);
         el.classList.remove('loading');
     }
 
-    // ─── Счётчики ссылок — загрузить текущие значения ────────────────────────
+    // ─── Счётчики ссылок — загрузить текущие значения с сервера ─────────────
     async function loadLinkCounts() {
         const totalsEl = document.getElementById('clicks-total');
 
-        const promises = LINK_KEYS.map(async key => {
+        // Загружаем все счётчики параллельно
+        const counts = await Promise.all(LINK_KEYS.map(async key => {
             const count = await getCount(key);
             const el = document.getElementById(`cnt-${key}`);
             if (el) {
@@ -742,11 +742,11 @@
                 el.classList.add('loaded');
             }
             return count;
-        });
+        }));
 
-        const counts = await Promise.all(promises);
-        const total = counts.reduce((a, b) => a + b, 0);
-        totalsEl.textContent = fmt(total);
+        // Суммарный счётчик — тоже с сервера (не локальный!)
+        const clicksTotalCount = await getCount('clicks-total');
+        totalsEl.textContent = fmt(clicksTotalCount);
         totalsEl.classList.remove('loading');
     }
 
@@ -755,20 +755,19 @@
         document.querySelectorAll('.card[data-key]').forEach(card => {
             card.addEventListener('click', async () => {
                 const key = card.dataset.key;
-                const newCount = await hitCount(key);
 
-                // Обновляем счётчик на карточке
+                // Бьём счётчик конкретной ссылки
+                const newCount = await hitCount(key);
                 const el = document.getElementById(`cnt-${key}`);
                 if (el) {
                     el.querySelector('.count-num').textContent = fmt(newCount);
                     el.classList.add('loaded');
                 }
 
-                // Обновляем общий счётчик переходов
+                // Бьём общий счётчик переходов (хранится отдельно на сервере)
+                const totalCount = await hitCount('clicks-total');
                 const totalsEl = document.getElementById('clicks-total');
-                const current = parseInt(totalsEl.dataset.raw || '0') + 1;
-                totalsEl.dataset.raw = current;
-                totalsEl.textContent = fmt(current);
+                totalsEl.textContent = fmt(totalCount);
             });
         });
     }
@@ -777,11 +776,6 @@
     (async () => {
         attachClickTrackers();
         await Promise.all([initVisitCounter(), loadLinkCounts()]);
-
-        // Сохраняем raw total для инкремента по клику
-        const totalsEl = document.getElementById('clicks-total');
-        const keys = await Promise.all(LINK_KEYS.map(k => getCount(k)));
-        totalsEl.dataset.raw = keys.reduce((a, b) => a + b, 0);
     })();
 </script>
 
